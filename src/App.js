@@ -20,6 +20,29 @@ function App() {
   const [selectedDate, setSelectedDate] = useState(dayjs().toDate());
   const [isLoading, setIsLoading] = useState(false);
   const [captures, setCaptures] = useState([]);
+  const [selectedCapture, setSelectedCapture] = useState();
+
+  useEffect(() => {
+    console.log(selectedCapture);
+    if (selectedCapture && !selectedCapture.hasOwnProperty('weatherInfo')) {
+      console.log('run');
+      setIsLoading(true);
+      let dateTime = convertDateToTimezoneSpecificString(selectedDate);
+      Api.getTwoHourWeatherForecasts(
+        dateTime,
+        selectedCapture.location.latitude,
+        selectedCapture.location.longitude
+      )
+        .then((weatherInfo) => {
+          console.log(weatherInfo);
+          setSelectedCapture({ ...selectedCapture, weatherInfo: weatherInfo });
+        })
+        .finally(() => {
+          setIsLoading(false);
+          console.log(selectedCapture);
+        });
+    }
+  }, [selectedCapture]);
 
   function handleDateChange(date) {
     setSelectedDate(date);
@@ -45,7 +68,6 @@ function App() {
     let dateTime = convertDateToTimezoneSpecificString(selectedDate);
     Api.getTrafficImageCaptures(dateTime)
       .then((captures) => {
-        console.log(captures);
         setCaptures(captures);
       })
       .finally(() => {
@@ -75,7 +97,14 @@ function App() {
       </Grid>
       <Grid container style={{ marginTop: '10px' }} justify='space-around'>
         <Grid item xs={6}>
-          {captures.length > 0 ? <LocationList captures={captures} /> : ''}
+          {captures.length > 0 ? (
+            <LocationList
+              captures={captures}
+              setSelectedCapture={setSelectedCapture}
+            />
+          ) : (
+            ''
+          )}
         </Grid>
       </Grid>
       <Backdrop className={classes.backdrop} open={isLoading}>

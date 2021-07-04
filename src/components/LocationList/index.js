@@ -5,7 +5,7 @@ const columns = [
   { field: 'locationName', headerName: 'Locations', width: '100%' },
 ];
 
-export default function LocationList({ captures }) {
+export default function LocationList({ captures, setSelectedCapture }) {
   return (
     <div style={{ height: 370, width: '100%' }}>
       <DataGrid
@@ -16,7 +16,7 @@ export default function LocationList({ captures }) {
         isRowSelectable={(params) => true}
         hideFooterSelectedRowCount={true}
         onRowClick={(param, event) => {
-          console.log(param);
+          setSelectedCapture(param.row);
         }}
       />
     </div>

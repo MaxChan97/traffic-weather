@@ -10,6 +10,10 @@ let Api = {
   API2: API2,
   reverseGeoCodeAPI: reverseGeoCodeAPI,
 
+  getLocationHumanReadableName(latitude, longitude) {
+    return axios.get(reverseGeoCodeAPI + latitude + ',' + longitude);
+  },
+
   async getTrafficImageCaptures(dateTime) {
     let res1 = await axios.get(API1 + '?date_time=' + dateTime);
     let captures = res1.data.items[0].cameras;
@@ -24,8 +28,44 @@ let Api = {
     return captures;
   },
 
-  getLocationHumanReadableName(latitude, longitude) {
-    return axios.get(reverseGeoCodeAPI + latitude + ',' + longitude);
+  distance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295; // Math.PI / 180
+    var c = Math.cos;
+    var a =
+      0.5 -
+      c((lat2 - lat1) * p) / 2 +
+      (c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))) / 2;
+
+    return 12742 * Math.asin(Math.abs(Math.sqrt(a))); // 2 * R; R = 6371 km
+  },
+
+  async getTwoHourWeatherForecasts(dateTime, latitude, longitude) {
+    let res = await axios.get(API2 + '?date_time=' + dateTime);
+    let closestDistance;
+    let closestArea;
+    let locations = res.data.area_metadata;
+    let forecasts = res.data.items[0].forecasts;
+    for (let i = 0; i < locations.length; i++) {
+      let locationLat = locations[i].label_location.latitude;
+      let locationLong = locations[i].label_location.longitude;
+      let distance = this.distance(
+        latitude,
+        longitude,
+        locationLat,
+        locationLong
+      );
+      let area = locations[i].name;
+      if (!closestDistance || distance < closestDistance) {
+        // this is the new closest area
+        closestDistance = distance;
+        closestArea = area;
+      }
+    }
+    console.log(closestArea);
+    const result = forecasts.filter(
+      (forecast) => forecast.area === closestArea
+    );
+    return result[0].forecast;
   },
 };
 
