@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import * as dayjs from 'dayjs';
 import Api from './helpers/Api';
-import { Grid, Button } from '@material-ui/core';
+import { Grid, Button, Backdrop, CircularProgress } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import DateTimeInput from './components/DateTimeInput';
 
+const useStyles = makeStyles((theme) => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
+}));
+
 function App() {
+  const classes = useStyles();
+
   const [selectedDate, setSelectedDate] = useState(dayjs().toDate());
+  const [isLoading, setIsLoading] = useState(false);
+  const [captures, setCaptures] = useState([]);
 
   function handleDateChange(date) {
     setSelectedDate(date);
@@ -27,14 +39,15 @@ function App() {
     return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':00';
   }
 
-  function onSubmit() {
+  async function onSubmit() {
+    setIsLoading(true);
     let dateTime = convertDateToTimezoneSpecificString(selectedDate);
     Api.getTrafficImageCaptures(dateTime)
-      .then((res) => {
-        console.log(res);
+      .then((captures) => {
+        setCaptures(captures);
       })
-      .catch((err) => {
-        // send an alert
+      .finally(() => {
+        setIsLoading(false);
       });
   }
 
@@ -58,6 +71,9 @@ function App() {
           </Button>
         </Grid>
       </Grid>
+      <Backdrop className={classes.backdrop} open={isLoading}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
     </div>
   );
 }
