@@ -18,7 +18,8 @@ let Api = {
         captures[i].location.latitude,
         captures[i].location.longitude
       );
-      captures[i].location.name = res2.data.results[0].locations[0].street;
+      captures[i].locationName = res2.data.results[0].locations[0].street;
+      captures[i].id = i;
     }
     return captures;
   },

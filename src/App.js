@@ -5,6 +5,7 @@ import Api from './helpers/Api';
 import { Grid, Button, Backdrop, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DateTimeInput from './components/DateTimeInput';
+import LocationList from './components/LocationList';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -44,6 +45,7 @@ function App() {
     let dateTime = convertDateToTimezoneSpecificString(selectedDate);
     Api.getTrafficImageCaptures(dateTime)
       .then((captures) => {
+        console.log(captures);
         setCaptures(captures);
       })
       .finally(() => {
@@ -69,6 +71,11 @@ function App() {
           >
             Enter
           </Button>
+        </Grid>
+      </Grid>
+      <Grid container style={{ marginTop: '10px' }} justify='space-around'>
+        <Grid item xs={6}>
+          {captures.length > 0 ? <LocationList captures={captures} /> : ''}
         </Grid>
       </Grid>
       <Backdrop className={classes.backdrop} open={isLoading}>
