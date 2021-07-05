@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import DateTimeInput from './components/DateTimeInput';
 import LocationList from './components/LocationList';
 import WeatherInfoCard from './components/WeatherInfoCard';
+import TrafficCamShotCard from './components/TrafficCamShotCard';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -104,12 +105,19 @@ function App() {
           </Button>
         </Grid>
       </Grid>
-      {selectedCapture && selectedCapture.hasOwnProperty('locationName') ? (
+      {selectedCapture &&
+      selectedCapture.hasOwnProperty('locationName') &&
+      selectedCapture.hasOwnProperty('weatherInfo') ? (
         <Typography variant='h5' style={{ marginTop: '5px' }}>
           {selectedCapture.locationName}
         </Typography>
       ) : (
-        ''
+        <Typography
+          variant='h5'
+          style={{ marginTop: '5px', visibility: 'hidden' }}
+        >
+          placeholder
+        </Typography>
       )}
       <Grid container style={{ marginTop: '10px' }} justify='space-around'>
         <Grid item xs={6}>
@@ -125,6 +133,17 @@ function App() {
         <Grid item xs={6}>
           {selectedCapture && selectedCapture.hasOwnProperty('weatherInfo') ? (
             <WeatherInfoCard selectedCapture={selectedCapture} />
+          ) : (
+            ''
+          )}
+        </Grid>
+      </Grid>
+      <Grid container>
+        <Grid item xs={12}>
+          {selectedCapture &&
+          selectedCapture.hasOwnProperty('image') &&
+          selectedCapture.hasOwnProperty('weatherInfo') ? (
+            <TrafficCamShotCard selectedCapture={selectedCapture} />
           ) : (
             ''
           )}
