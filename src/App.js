@@ -2,10 +2,17 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import * as dayjs from 'dayjs';
 import Api from './helpers/Api';
-import { Grid, Button, Backdrop, CircularProgress } from '@material-ui/core';
+import {
+  Grid,
+  Button,
+  Backdrop,
+  CircularProgress,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DateTimeInput from './components/DateTimeInput';
 import LocationList from './components/LocationList';
+import WeatherInfoCard from './components/WeatherInfoCard';
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -65,6 +72,8 @@ function App() {
 
   async function onSubmit() {
     setIsLoading(true);
+    setCaptures([]);
+    setSelectedCapture();
     let dateTime = convertDateToTimezoneSpecificString(selectedDate);
     Api.getTrafficImageCaptures(dateTime)
       .then((captures) => {
@@ -95,6 +104,13 @@ function App() {
           </Button>
         </Grid>
       </Grid>
+      {selectedCapture && selectedCapture.hasOwnProperty('locationName') ? (
+        <Typography variant='h5' style={{ marginTop: '5px' }}>
+          {selectedCapture.locationName}
+        </Typography>
+      ) : (
+        ''
+      )}
       <Grid container style={{ marginTop: '10px' }} justify='space-around'>
         <Grid item xs={6}>
           {captures.length > 0 ? (
@@ -102,6 +118,13 @@ function App() {
               captures={captures}
               setSelectedCapture={setSelectedCapture}
             />
+          ) : (
+            ''
+          )}
+        </Grid>
+        <Grid item xs={6}>
+          {selectedCapture && selectedCapture.hasOwnProperty('weatherInfo') ? (
+            <WeatherInfoCard selectedCapture={selectedCapture} />
           ) : (
             ''
           )}
