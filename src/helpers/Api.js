@@ -16,7 +16,9 @@ let Api = {
 
   async getTrafficImageCaptures(dateTime) {
     let res1 = await axios.get(API1 + '?date_time=' + dateTime);
+    console.log(res1);
     let captures = res1.data.items[0].cameras;
+    let timestamp = res1.data.items[0].timestamp;
     for (let i = 0; i < captures.length; i++) {
       let res2 = await Api.getLocationHumanReadableName(
         captures[i].location.latitude,
@@ -25,7 +27,10 @@ let Api = {
       captures[i].locationName = res2.data.results[0].locations[0].street;
       captures[i].id = i;
     }
-    return captures;
+    return {
+      captures,
+      timestamp,
+    };
   },
 
   distance(lat1, lon1, lat2, lon2) {

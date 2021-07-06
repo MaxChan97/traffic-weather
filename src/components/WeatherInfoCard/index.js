@@ -5,7 +5,7 @@ export default function WeatherInfoCard({ selectedCapture }) {
   const weatherInfo = selectedCapture.weatherInfo;
 
   return (
-    <Card>
+    <Card style={{ width: '80%', margin: 'auto' }}>
       <CardContent>
         <Typography variant='h6' component='h2'>
           Weather Information

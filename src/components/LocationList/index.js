@@ -1,11 +1,22 @@
 import React from 'react';
 import { DataGrid } from '@material-ui/data-grid';
+import * as dayjs from 'dayjs';
 
-const columns = [
-  { field: 'locationName', headerName: 'Locations', width: '100%' },
-];
+export default function LocationList({
+  captures,
+  setSelectedCapture,
+  captureTimestamp,
+}) {
+  const columns = [
+    {
+      field: 'locationName',
+      headerName: `Locations (as of ${dayjs(captureTimestamp).format(
+        'D MMM YYYY H:mm'
+      )})`,
+      width: '100%',
+    },
+  ];
 
-export default function LocationList({ captures, setSelectedCapture }) {
   return (
     <div style={{ height: 370, width: '100%' }}>
       <DataGrid

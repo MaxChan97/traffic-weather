@@ -28,14 +28,14 @@ function App() {
   const [selectedDate, setSelectedDate] = useState(dayjs().toDate());
   const [isLoading, setIsLoading] = useState(false);
   const [captures, setCaptures] = useState([]);
+  const [captureTimestamp, setCaptureTimestamp] = useState();
   const [selectedCapture, setSelectedCapture] = useState();
 
   useEffect(() => {
-    console.log(selectedCapture);
     if (selectedCapture && !selectedCapture.hasOwnProperty('weatherInfo')) {
-      console.log('run');
       setIsLoading(true);
       let dateTime = convertDateToTimezoneSpecificString(selectedDate);
+      console.log(dateTime);
       Api.getTwoHourWeatherForecasts(
         dateTime,
         selectedCapture.location.latitude,
@@ -76,9 +76,11 @@ function App() {
     setCaptures([]);
     setSelectedCapture();
     let dateTime = convertDateToTimezoneSpecificString(selectedDate);
+    console.log(dateTime);
     Api.getTrafficImageCaptures(dateTime)
-      .then((captures) => {
-        setCaptures(captures);
+      .then((data) => {
+        setCaptures(data.captures);
+        setCaptureTimestamp(data.timestamp);
       })
       .finally(() => {
         setIsLoading(false);
@@ -86,67 +88,74 @@ function App() {
   }
 
   return (
-    <div className='App'>
-      <Grid container>
-        <Grid item xs={5}>
-          <DateTimeInput
-            selectedDate={selectedDate}
-            handleDateChange={handleDateChange}
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <Button
-            variant='contained'
-            color='primary'
-            style={{ marginTop: '20px' }}
-            onClick={onSubmit}
-          >
-            Enter
-          </Button>
-        </Grid>
-      </Grid>
-      {selectedCapture &&
-      selectedCapture.hasOwnProperty('locationName') &&
-      selectedCapture.hasOwnProperty('weatherInfo') ? (
-        <Typography variant='h5' style={{ marginTop: '5px' }}>
-          {selectedCapture.locationName}
-        </Typography>
-      ) : (
-        <Typography
-          variant='h5'
-          style={{ marginTop: '5px', visibility: 'hidden' }}
-        >
-          placeholder
-        </Typography>
-      )}
-      <Grid container style={{ marginTop: '10px' }} justify='space-around'>
-        <Grid item xs={6}>
-          {captures.length > 0 ? (
-            <LocationList
-              captures={captures}
-              setSelectedCapture={setSelectedCapture}
+    <div className='App' style={{ display: 'flex', justifyContent: 'center' }}>
+      <Grid style={{ width: '80%' }}>
+        <Grid container>
+          <Grid item xs={12} md={3} container justify='flex-start'>
+            <DateTimeInput
+              selectedDate={selectedDate}
+              handleDateChange={handleDateChange}
             />
-          ) : (
-            ''
-          )}
+          </Grid>
+          <Grid item xs={12} md={1} container justify='flex-end'>
+            <Button
+              variant='contained'
+              color='primary'
+              style={{ marginTop: '18px', height: '38px', width: '100%' }}
+              onClick={onSubmit}
+            >
+              Enter
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-          {selectedCapture && selectedCapture.hasOwnProperty('weatherInfo') ? (
-            <WeatherInfoCard selectedCapture={selectedCapture} />
-          ) : (
-            ''
-          )}
+        {selectedCapture &&
+        selectedCapture.hasOwnProperty('locationName') &&
+        selectedCapture.hasOwnProperty('weatherInfo') &&
+        selectedCapture.hasOwnProperty('timestamp') ? (
+          <Typography variant='h5' style={{ marginTop: '18px' }}>
+            {`${selectedCapture.locationName} at ${dayjs(
+              selectedCapture.timestamp
+            ).format('D MMM YYYY H:mm')}`}
+          </Typography>
+        ) : (
+          <Typography
+            variant='h5'
+            style={{ marginTop: '18px', visibility: 'hidden' }}
+          >
+            placeholder
+          </Typography>
+        )}
+        <Grid container style={{ marginTop: '10px' }}>
+          <Grid item xs={12} md={6}>
+            {captures.length > 0 && captureTimestamp ? (
+              <LocationList
+                captures={captures}
+                setSelectedCapture={setSelectedCapture}
+                captureTimestamp={captureTimestamp}
+              />
+            ) : (
+              ''
+            )}
+          </Grid>
+          <Grid item xs={12} md={6} style={{ paddingTop: '18px' }}>
+            {selectedCapture &&
+            selectedCapture.hasOwnProperty('weatherInfo') ? (
+              <WeatherInfoCard selectedCapture={selectedCapture} />
+            ) : (
+              ''
+            )}
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={12}>
-          {selectedCapture &&
-          selectedCapture.hasOwnProperty('image') &&
-          selectedCapture.hasOwnProperty('weatherInfo') ? (
-            <TrafficCamShotCard selectedCapture={selectedCapture} />
-          ) : (
-            ''
-          )}
+        <Grid container style={{ paddingTop: '18px' }}>
+          <Grid item xs={12}>
+            {selectedCapture &&
+            selectedCapture.hasOwnProperty('image') &&
+            selectedCapture.hasOwnProperty('weatherInfo') ? (
+              <TrafficCamShotCard selectedCapture={selectedCapture} />
+            ) : (
+              ''
+            )}
+          </Grid>
         </Grid>
       </Grid>
       <Backdrop className={classes.backdrop} open={isLoading}>
