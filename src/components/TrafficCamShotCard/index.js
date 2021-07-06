@@ -1,16 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardMedia, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-  media: {
-    height: '100%',
-    width: '100%',
-  },
-}));
 
 export default function TrafficCamShotCard({ selectedCapture }) {
-  const classes = useStyles();
   const imageUrl = selectedCapture.image;
 
   return (
@@ -23,7 +14,7 @@ export default function TrafficCamShotCard({ selectedCapture }) {
           <img
             style={{ width: '100%' }}
             src={imageUrl}
-            alt='Traffic Camera Image'
+            alt='Traffic Camera Shot'
           />
         </CardMedia>
       </CardContent>

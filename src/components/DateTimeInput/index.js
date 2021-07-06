@@ -1,5 +1,4 @@
 import React from 'react';
-import * as dayjs from 'dayjs';
 import {
   MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
