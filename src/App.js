@@ -35,19 +35,16 @@ function App() {
     if (selectedCapture && !selectedCapture.hasOwnProperty('weatherInfo')) {
       setIsLoading(true);
       let dateTime = convertDateToTimezoneSpecificString(selectedDate);
-      console.log(dateTime);
       Api.getTwoHourWeatherForecasts(
         dateTime,
         selectedCapture.location.latitude,
         selectedCapture.location.longitude
       )
         .then((weatherInfo) => {
-          console.log(weatherInfo);
           setSelectedCapture({ ...selectedCapture, weatherInfo: weatherInfo });
         })
         .finally(() => {
           setIsLoading(false);
-          console.log(selectedCapture);
         });
     }
   }, [selectedCapture]);
@@ -76,7 +73,6 @@ function App() {
     setCaptures([]);
     setSelectedCapture();
     let dateTime = convertDateToTimezoneSpecificString(selectedDate);
-    console.log(dateTime);
     Api.getTrafficImageCaptures(dateTime)
       .then((data) => {
         setCaptures(data.captures);
@@ -88,7 +84,14 @@ function App() {
   }
 
   return (
-    <div className='App' style={{ display: 'flex', justifyContent: 'center' }}>
+    <div
+      className='App'
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        paddingBottom: '18px',
+      }}
+    >
       <Grid style={{ width: '80%' }}>
         <Grid container>
           <Grid item xs={12} md={3} container justify='flex-start'>
@@ -125,8 +128,8 @@ function App() {
             placeholder
           </Typography>
         )}
-        <Grid container style={{ marginTop: '10px' }}>
-          <Grid item xs={12} md={6}>
+        <Grid container>
+          <Grid item xs={12} md={6} style={{ paddingTop: '18px' }}>
             {captures.length > 0 && captureTimestamp ? (
               <LocationList
                 captures={captures}

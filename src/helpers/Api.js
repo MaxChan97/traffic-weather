@@ -16,7 +16,6 @@ let Api = {
 
   async getTrafficImageCaptures(dateTime) {
     let res1 = await axios.get(API1 + '?date_time=' + dateTime);
-    console.log(res1);
     let captures = res1.data.items[0].cameras;
     let timestamp = res1.data.items[0].timestamp;
     for (let i = 0; i < captures.length; i++) {
@@ -66,7 +65,6 @@ let Api = {
         closestArea = area;
       }
     }
-    console.log(closestArea);
     const result = forecasts.filter(
       (forecast) => forecast.area === closestArea
     );

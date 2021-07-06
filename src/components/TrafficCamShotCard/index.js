@@ -14,7 +14,7 @@ export default function TrafficCamShotCard({ selectedCapture }) {
   const imageUrl = selectedCapture.image;
 
   return (
-    <Card>
+    <Card variant='outlined'>
       <CardContent>
         <Typography variant='h6' component='h2'>
           Traffic Camera Image
